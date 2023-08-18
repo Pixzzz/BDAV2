@@ -1,0 +1,66 @@
+LAB 4
+
+CREATE DATABASE lab4;
+USE lab4;
+
+CREATE TABLE Personas (
+    id INT PRIMARY KEY,
+    nombre VARCHAR(50),
+    provincia VARCHAR(50),
+    Preferencia INT
+);
+
+CREATE TABLE Producto (
+	ID INT PRIMARY KEY,
+	NombreP VARCHAR(50)
+);
+
+INSERT INTO Personas (id, nombre, provincia, Preferencia)
+VALUES
+    (1, 'Juan', 'Santiago', NULL),
+    (2, 'Pepe', 'La Vega', NULL),
+    (3, 'Jose', 'Elias Piña', NULL),
+    (4, 'Marcos', 'Azua', NULL);
+
+INSERT INTO Producto VALUES 
+(1, 'Producto 1'),
+(2, 'Producto 2'),
+(3, 'Producto 3'),
+(4, 'Producto 4');
+
+DECLARE @id INT, @Preferencia INT, @ProductoID INT, @TotalProductos INT;
+SET @TotalProductos = (SELECT COUNT(*) FROM Producto);
+
+DECLARE preferencia_cursor CURSOR FOR
+SELECT id FROM Personas;
+
+OPEN preferencia_cursor;
+
+FETCH NEXT FROM preferencia_cursor INTO @id;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @Preferencia = ROUND(RAND() * (@TotalProductos - 1) + 1);
+    SET @ProductoID = (SELECT ID FROM Producto WHERE ID = @Preferencia);
+
+    UPDATE Personas
+    SET Preferencia = @ProductoID
+    WHERE id = @id;
+
+    FETCH NEXT FROM preferencia_cursor INTO @id;
+END
+
+CLOSE preferencia_cursor;
+DEALLOCATE preferencia_cursor;
+
+
+SELECT Producto.NombreP AS Producto, COUNT(Personas.id) AS cantidad_personas
+FROM Personas
+JOIN Producto ON Personas.Preferencia = Producto.ID
+GROUP BY Producto.NombreP;
+
+
+SELECT provincia, COUNT(*) AS cantidad_personas
+FROM Personas
+WHERE Preferencia = 1
+GROUP BY provincia;

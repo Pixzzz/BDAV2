@@ -1,0 +1,73 @@
+LAB2
+
+CREATE TABLE Cliente(
+
+    ID INT PRIMARY KEY NOT NULL,
+
+    Nombre VARCHAR(50),
+
+    Apellido VARCHAR(50),
+
+    Telefono INT
+
+);
+
+
+
+INSERT INTO Cliente (ID, Nombre, Apellido, Telefono)
+
+VALUES('1', 'Juan','Martinez','849-345-6756');
+
+
+
+CREATE TABLE Productos(
+
+    IdProduc INT PRIMARY KEY NOT NULL,
+
+    Nombre VARCHAR(50),
+
+    Precio FLOAT
+
+);
+
+
+
+
+
+CREATE TABLE Factura(
+
+    IdFact INT PRIMARY KEY NOT NULL,
+
+    Fecha VARCHAR(20),
+
+    Tipo DATETIME
+
+);
+
+
+
+SELECT c.ID, c.Nombre, COUNT(f.IdFact) AS CantidadFacturas
+
+FROM Cliente c
+
+LEFT JOIN Factura f ON c.ID = f.ClienteID
+
+WHERE YEAR(f.Fecha) = YEAR(CURRENT_DATE())
+
+GROUP BY c.ID, c.Nombre;
+
+
+
+
+
+CREATE VIEW ProductosContado AS
+
+SELECT p.IdProduc, p.Nombre, p.Precio
+
+FROM Productos p
+
+INNER JOIN Detalles_Factura df ON p.IdProduc = df.ProductoID
+
+INNER JOIN Factura f ON df.FacturaID = f.IdFact
+
+WHERE f.Tipo = 2;

@@ -1,0 +1,38 @@
+LAB 4 PARTE 2
+
+CREATE DATABASE Lab_4
+
+USE Lab_4
+
+CREATE TABLE Cliente(
+ID INT PRIMARY KEY NOT NULL,
+Nombre VARCHAR (100) NOT NULL,
+FechaNac VARCHAR (20) NOT NULL,
+);
+
+
+CREATE TABLE Cumples(
+ID INT PRIMARY KEY NOT NULL,
+mes_cumple INT NOT NULL,
+cliente_ID INT NOT NULL,
+FOREIGN KEY (cliente_ID) REFERENCES Cliente(ID)
+);
+
+INSERT INTO Cliente VALUES 
+(1,'Pedro','2000-12-09'),
+(2,'Juan','1997-13-07')
+
+INSERT INTO Cumples VALUES 
+(1,9,1),
+(2,7,2)
+
+CREATE TRIGGER TR_Cumples_AfterInsert
+ON Cliente
+AFTER INSERT
+AS
+BEGIN
+    
+    INSERT INTO Cumples (ID, mes_cumple, cliente_ID)
+    SELECT ID, MONTH(CONVERT(DATE, FechaNac, 103)), ID
+    FROM INSERTED;
+END;
